@@ -29,9 +29,9 @@ public class Spawner : MonoBehaviour
 
     void SpawnEnemy()
     {
-        if (EnemyPool.SharedInstance.GetPooledObject())
+        if (EnemyPool.instance.GetPooledObject())
         {
-            var enemy = EnemyPool.SharedInstance.GetPooledObject();
+            var enemy = EnemyPool.instance.GetPooledObject();
             enemy.gameObject.transform.position = new Vector3(0, 0, 0);
             enemy.gameObject.SetActive(true);
         }

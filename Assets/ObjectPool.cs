@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-// Must derive from monobehaviour.
 public class ObjectPool<T> : MonoBehaviour where T : MonoBehaviour
 {
-    public static ObjectPool<T> SharedInstance;
+    public static ObjectPool<T> instance;
 
     public T objectToPool;
     public int amountToPool;
@@ -12,7 +11,7 @@ public class ObjectPool<T> : MonoBehaviour where T : MonoBehaviour
 
     private void Awake()
     {
-        SharedInstance = this;
+        instance = this;
         // Free list is used by free objects
         pooledObjects = new List<T>(amountToPool);
     }
@@ -29,6 +28,21 @@ public class ObjectPool<T> : MonoBehaviour where T : MonoBehaviour
         }
     }
 
+    public virtual void Deactivate(T objectToDeActivate)
+    {
+        objectToDeActivate.gameObject.SetActive(false);
+    }
+
+    public virtual void Activate(T objectToActivate)
+    {
+        objectToActivate.gameObject.SetActive(true);
+    }
+
+    private void IncreasePoolSize()
+    {
+        // If there is not disabled objects in pool == If there is not free objects in pool
+    }
+
     public T GetPooledObject()
     {
         for (int i = 0; i < pooledObjects.Count; i++)
@@ -37,6 +51,10 @@ public class ObjectPool<T> : MonoBehaviour where T : MonoBehaviour
             if (!pooledObjects[i].gameObject.activeInHierarchy)
             {
                 return (pooledObjects[i]);
+            }
+            else
+            {
+                IncreasePoolSize();
             }
         }
 
