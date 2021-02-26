@@ -1,23 +1,38 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+namespace TowerDefence
 {
-    private void OnEnable()
+    /// <summary>
+    /// Test enemy class for testing object pool.
+    /// </summary>
+    public class Enemy : MonoBehaviour
     {
-        StartCoroutine(DeathTimer());
-    }
+        private float aliveTime = 5f;
 
-    IEnumerator DeathTimer()
-    {
-        yield return new WaitForSeconds(5);
+        private void OnEnable()
+        {
+            StartCoroutine(DeathTimer(aliveTime));
+        }
 
-        EnemyPool.instance.Deactivate(this);
-    }
+        IEnumerator DeathTimer(float timeToLive)
+        {
+            yield return new WaitForSeconds(timeToLive);
 
-    void Update()
-    {
-        transform.Translate(0,0, 1 * 3f *Time.deltaTime);
+            Die();
+        }
+
+        /// <summary>
+        /// Puts this GameObject back to object pool.
+        /// </summary>
+        private void Die()
+        {
+            EnemyPool.instance.AddObjectToPool(this);
+        }
+
+        void Update()
+        {
+            transform.Translate(0, 0, 1 * 3f * Time.deltaTime);
+        }
     }
 }

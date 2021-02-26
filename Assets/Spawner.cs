@@ -1,43 +1,47 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
 
-public class Spawner : MonoBehaviour
+namespace TowerDefence
 {
-    private bool currentlySpawning = false;
-
-    private void Update()
+    public class Spawner : MonoBehaviour
     {
-        if (!currentlySpawning)
-        {
-            StartCoroutine(SpawnCoroutine());
-            currentlySpawning = true;
-        }
-    }
+        private bool currentlySpawning = false;
+        public float spawnInterval = 0.25f;
 
-    IEnumerator SpawnCoroutine()
-    {
-        for (int i = 0; i < 10; i++)
+        private void Update()
         {
-            yield return new WaitForSeconds(.2f);
-            SpawnEnemy();
+            if (!currentlySpawning)
+            {
+                StartCoroutine(SpawnCoroutine());
+                currentlySpawning = true;
+            }
         }
 
-        currentlySpawning = false;
-    }
+        IEnumerator SpawnCoroutine()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                yield return new WaitForSeconds(spawnInterval);
+                SpawnEnemy();
+            }
 
-    void SpawnEnemy()
-    {
-        if (EnemyPool.instance.GetPooledObject())
+            currentlySpawning = false;
+        }
+
+        /// <summary>
+        /// Gets enemy from enemy pool and activates it.
+        /// </summary>
+        void SpawnEnemy()
         {
             var enemy = EnemyPool.instance.GetPooledObject();
-            enemy.gameObject.transform.position = new Vector3(0, 0, 0);
-            enemy.gameObject.SetActive(true);
-        }
-        else
-        {
-            print("No pooled objects to spawn...");
+
+            // For testing spawns at spawner GameObject's position.
+            enemy.transform.position = transform.position;
+
+            if (enemy != null)
+            {
+                EnemyPool.instance.Activate(enemy);
+            }
         }
     }
 }

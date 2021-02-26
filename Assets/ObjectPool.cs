@@ -1,63 +1,106 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectPool<T> : MonoBehaviour where T : MonoBehaviour
+namespace TowerDefence
 {
-    public static ObjectPool<T> instance;
-
-    public T objectToPool;
-    public int amountToPool;
-    private List<T> pooledObjects;
-
-    private void Awake()
+    /// <summary>
+    /// Generic Object pool base class which will be used to create sub object pools.
+    /// </summary>
+    /// <typeparam name="T">All subclasses must derive from MonoBehaviour</typeparam>
+    public abstract class ObjectPool<T> : MonoBehaviour where T : MonoBehaviour
     {
-        instance = this;
-        // Free list is used by free objects
-        pooledObjects = new List<T>(amountToPool);
-    }
+        /// <summary>
+        /// We use one pool for one type of objects. We will use instance of each pool to access it easily.
+        /// </summary>
+        public static ObjectPool<T> instance { get; private set; }
 
-    private void Start()
-    {
-        // Instantiate objects and disable
-        for (int i = 0; i < amountToPool; i++)
+        /// <summary>
+        /// Set which object should be pooled into this pool
+        /// </summary>
+        [SerializeField, Tooltip("Set the object to be pooled")]
+        private T objectToPool;
+
+        /// <summary>
+        /// Set how many objects should be put into the initial queue
+        /// </summary>
+        [SerializeField, Tooltip("Set the initial pool size amount")]
+        private int amountToPool;
+
+        /// <summary>
+        /// Set how many additional objects will be created for the queue if the initial amount is exceeded
+        /// </summary>
+        [SerializeField, Tooltip("Set by how much the queue will be increased if pool runs empty")]
+        private int poolIncreaseAmount;
+
+        /// <summary>
+        /// The queue where the objects will be placed and pulled from by the pool
+        /// </summary>
+        private Queue<T> inActiveObjectsQueue = new Queue<T>();
+
+        private void Awake()
         {
-            // Instantiate and parent it to transform
-            var tmpObject = Instantiate(objectToPool, transform);
-            tmpObject.gameObject.SetActive(false);
-            pooledObjects.Add(tmpObject);
-        }
-    }
+            instance = this;
 
-    public virtual void Deactivate(T objectToDeActivate)
-    {
-        objectToDeActivate.gameObject.SetActive(false);
-    }
-
-    public virtual void Activate(T objectToActivate)
-    {
-        objectToActivate.gameObject.SetActive(true);
-    }
-
-    private void IncreasePoolSize()
-    {
-        // If there is not disabled objects in pool == If there is not free objects in pool
-    }
-
-    public T GetPooledObject()
-    {
-        for (int i = 0; i < pooledObjects.Count; i++)
-        {
-            // If there is disabled objects in pool
-            if (!pooledObjects[i].gameObject.activeInHierarchy)
-            {
-                return (pooledObjects[i]);
-            }
-            else
-            {
-                IncreasePoolSize();
-            }
+            // Add the starting amount of objects to the pool
+            AddObjectsToQueue(amountToPool);
         }
 
-        return null;
+        /// <summary>
+        /// Sets object Disabled in hierarchy and
+        /// Returns selected object to the end of pool Queue.
+        /// Virtual method that can be overwritten with custom features in the sub pool class.
+        /// </summary>
+        /// <param name="objectToPool">Object to be returned to the pool</param>
+        public virtual void AddObjectToPool(T objectToPool)
+        {
+            objectToPool.gameObject.SetActive(false);
+
+            inActiveObjectsQueue.Enqueue(objectToPool);
+        }
+
+        /// <summary>
+        /// Activates the object in hierarchy.
+        /// Virtual method that can be overwritten with custom features in the sub pool class.
+        /// </summary>
+        /// <param name="objectToActivate">Object to be activated in the hierarchy</param>
+        public virtual void Activate(T objectToActivate)
+        {
+            objectToActivate.gameObject.SetActive(true);
+        }
+
+        /// <summary>
+        /// Add given amount of objects to Queue pool.
+        /// We parent objects to this object pool GameObject, so it doesn't fill up scenes hierarchy.
+        /// </summary>
+        /// <param name="amount">Amount of objects to be added to the pool</param>
+        private void AddObjectsToQueue(int amount)
+        {
+            // Add the given amount of the objects into the pool queue.
+            for (int i = 0; i < amount; i++)
+            {
+                var newObject = Instantiate(objectToPool, transform);
+
+                AddObjectToPool(newObject);
+            }
+        }
+
+        /// <summary>
+        /// Checks if there are inActive objects available.
+        /// If there are inActive objects,
+        /// it will add declared amount so there are always objects available.
+        /// Removes and returns the object at the beginning of the Queue.
+        /// </summary>
+        /// <returns>Object from object pool</returns>
+        public T GetPooledObject()
+        {
+            if (inActiveObjectsQueue.Count == 0)
+            {
+                AddObjectsToQueue(poolIncreaseAmount);
+            }
+
+            var objectFromPool = inActiveObjectsQueue.Dequeue();
+
+            return objectFromPool;
+        }
     }
 }

@@ -1,12 +1,24 @@
-﻿public class EnemyPool : ObjectPool<Enemy>
-{
-    public override void Deactivate(Enemy objectToDeActivate)
-    {
-        base.Deactivate(objectToDeActivate);
-    }
+﻿using UnityEngine;
 
-    public override void Activate(Enemy objectToActivate)
+namespace TowerDefence
+{
+    /// <summary>
+    /// Class that extends the Generic Object Pool Class.
+    /// You must define type of Object Pool you want to make.
+    /// </summary>
+    public class EnemyPool : ObjectPool<Enemy>
     {
-        base.Activate(objectToActivate);
+
+        /// <summary>
+        /// Sets enemy Disabled in hierarchy and
+        /// Returns selected enemy to the end of pool Queue.
+        /// Reset transforms position before it's added to pool.
+        /// </summary>
+        /// <param name="objectToPool">Enemy to be returned to the pool</param>
+        public override void AddObjectToPool(Enemy objectToPool)
+        {
+            objectToPool.gameObject.transform.position = new Vector3(0, 0, 0);
+            base.AddObjectToPool(objectToPool);
+        }
     }
 }
