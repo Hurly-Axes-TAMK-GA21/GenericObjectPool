@@ -18,6 +18,7 @@ namespace TowerDefence
         public override void AddObjectToPool(Enemy objectToPool)
         {
             objectToPool.gameObject.transform.position = new Vector3(0, 0, 0);
+            objectToPool.ResetHealth();
             base.AddObjectToPool(objectToPool);
         }
     }

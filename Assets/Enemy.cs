@@ -6,7 +6,7 @@ namespace TowerDefence
     /// <summary>
     /// Test enemy class for testing object pool.
     /// </summary>
-    public class Enemy : MonoBehaviour
+    public class Enemy : EnemyBase
     {
         private float aliveTime = 5f;
 
@@ -18,21 +18,25 @@ namespace TowerDefence
         IEnumerator DeathTimer(float timeToLive)
         {
             yield return new WaitForSeconds(timeToLive);
-
-            Die();
-        }
-
-        /// <summary>
-        /// Puts this GameObject back to object pool.
-        /// </summary>
-        private void Die()
-        {
-            EnemyPool.instance.AddObjectToPool(this);
+            DestroyEnemy();
         }
 
         void Update()
         {
             transform.Translate(0, 0, 1 * 3f * Time.deltaTime);
+        }
+
+        /// <summary>
+        /// Puts this GameObject back to object pool.
+        /// </summary>
+        public override void DestroyEnemy()
+        {
+            EnemyPool.instance.AddObjectToPool(this);
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            TakeDamage(50);
         }
     }
 }

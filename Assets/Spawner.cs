@@ -6,7 +6,7 @@ namespace TowerDefence
     public class Spawner : MonoBehaviour
     {
         private bool currentlySpawning = false;
-        public float spawnInterval = 0.25f;
+        public float spawnInterval = 3f;
 
         private void Update()
         {
