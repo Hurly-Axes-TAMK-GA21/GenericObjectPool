@@ -17,11 +17,11 @@ namespace TowerDefence
 
         // The current health of the enemy
         [SerializeField]
-        protected private float currentHealth;
+        protected private int currentHealth;
 
         // The maxmimum health of the enemy
         [SerializeField]
-        protected private float maxHealth = 100;
+        protected private int maxHealth = 100;
 
         private void Start()
         {   // Reset the current health value to the max health value
@@ -32,7 +32,7 @@ namespace TowerDefence
         {
             get 
             { 
-                return CurrentHealth; 
+                return currentHealth; 
             }
 
             // Set the CurrentHealth value to correspond to the member variable.
@@ -48,7 +48,7 @@ namespace TowerDefence
         {
             get
             {
-                return MaxHealth;
+                return maxHealth;
             }
 
             private set
