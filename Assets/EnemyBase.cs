@@ -35,6 +35,7 @@ namespace TowerDefence
                 return CurrentHealth; 
             }
 
+            // Set the CurrentHealth value to correspond to the member variable.
             private set
             {
                 currentHealth = value;
@@ -42,6 +43,7 @@ namespace TowerDefence
 
         }
 
+        // Set the MaxHealth value to correspond to the member variable.
         public int MaxHealth 
         {
             get
@@ -55,34 +57,19 @@ namespace TowerDefence
             }
         }
 
-        public bool IsImmortal {
-            get;
-            set;
-        }
-
         public void DecreaseHealth(int amount)
         {
             currentHealth -= amount;
 
+            // If the health amount goes to zero or below, call the Destroy method
             if (currentHealth <= 0)
             {
                 DestroyEnemy();
             }
         }
 
-        public void IncreaseHealth(int amount)
-        {
-            if (currentHealth + amount > maxHealth)
-            {
-                currentHealth = maxHealth;
-            } else
-            {
-                currentHealth += amount;
-            }
-        }
-
         public void ResetHealth()
-        {
+        {   // Reset the objects health to the maximum. Call this before returning the object to the object pool.
             currentHealth = maxHealth;
         }
 

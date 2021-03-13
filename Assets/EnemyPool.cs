@@ -12,7 +12,7 @@ namespace TowerDefence
         /// <summary>
         /// Sets enemy Disabled in hierarchy and
         /// Returns selected enemy to the end of pool Queue.
-        /// Reset transforms position before it's added to pool.
+        /// Reset transforms position before it's added to pool and also reset the health of the unit.
         /// </summary>
         /// <param name="objectToPool">Enemy to be returned to the pool</param>
         public override void AddObjectToPool(Enemy objectToPool)

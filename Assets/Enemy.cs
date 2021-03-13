@@ -27,7 +27,7 @@ namespace TowerDefence
         }
 
         /// <summary>
-        /// Puts this GameObject back to object pool.
+        /// Override the base DestroyEnemy method since we are using object pool for this.
         /// </summary>
         public override void DestroyEnemy()
         {
@@ -35,7 +35,7 @@ namespace TowerDefence
         }
 
         private void OnTriggerEnter(Collider other)
-        {
+        {   // Take damage for the amount.
             TakeDamage(50);
         }
     }
